@@ -34,8 +34,6 @@
     -webkit-font-smoothing: none;
     text-rendering: optimizeSpeed;
     box-sizing: border-box;
-    width: 350px;
-    height: 780px;
     padding-top: 50px;
     padding-bottom: 30px;
   }

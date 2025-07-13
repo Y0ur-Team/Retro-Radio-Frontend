@@ -135,6 +135,37 @@ export default function HomePage() {
   }, []); 
 
   useEffect(() => {
+  if (!radioOn) return;
+
+  const timeout = setTimeout(() => {
+    const joinFrequency = async () => {
+      try {
+        const res = await fetch("/api/join", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ frequency: currentFrequency.toFixed(1) }),
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          await typeOut(`📡 ${data.message}`, setStatusMessage);
+        } else {
+          await typeOut(`❌ ${data.error}`, setStatusMessage);
+        }
+      } catch {
+        await typeOut("❌ Join failed. Network error.", setStatusMessage);
+      }
+    };
+
+    joinFrequency();
+  }, 2000);
+
+  return () => clearTimeout(timeout);
+}, [currentFrequency, radioOn, typeOut]);
+
+  useEffect(() => {
     if (isDialDragging) {
       window.addEventListener("mousemove", handleDialMove);
       window.addEventListener("mouseup", handleDialEnd);
@@ -161,30 +192,30 @@ export default function HomePage() {
   const dialTranslateX = -currentOffsetPx + (containerVisibleWidth / 2) - (segmentWidth / 2);
 
   const handleConnectDisconnect = useCallback(async () => {
-    if (radioOn) {
-      setRadioOn(false);
-      await typeOut("Disconnecting...", setStatusMessage);
-      setCallsign("");
-      await typeOut("Radio Offline. Press CONNECT.", setStatusMessage);
-    } else {
-      await typeOut("Establishing connection...", setStatusMessage);
-      try {
-        const res = await fetch("/api/auth", { method: "POST" });
-        const data = await res.json();
-        if (res.ok) {
-          setCallsign(data.callsign);
-          setRadioOn(true);
-          await typeOut(`CALLSIGN: ${callsign}`, setStatusMessage);
-        } else {
-          await typeOut(`Error: ${data.error || "Failed authentication"}`, setStatusMessage);
-          setRadioOn(false);
-        }
-      } catch {
-        await typeOut("Network error. Try again.", setStatusMessage);
+  if (radioOn) {
+    setRadioOn(false);
+    await typeOut(`Disconnecting ${callsign}...`, setStatusMessage);
+    setCallsign("");
+    await typeOut("Radio Offline. Press CONNECT.", setStatusMessage);
+  } else {
+    await typeOut("Establishing connection...", setStatusMessage);
+    try {
+      const res = await fetch("/api/auth", { method: "POST" });
+      const data = await res.json();
+      if (res.ok) {
+        setCallsign(data.callsign);
+        setRadioOn(true);
+        await typeOut(`CALLSIGN: ${data.callsign}`, setStatusMessage);
+      } else {
+        await typeOut(`Error: ${data.error || "Failed authentication"}`, setStatusMessage);
         setRadioOn(false);
       }
+    } catch {
+      await typeOut("Network error. Try again.", setStatusMessage);
+      setRadioOn(false);
     }
-  }, [radioOn, typeOut, callsign]);
+  }
+}, [radioOn, typeOut, callsign]);
 
 return (
     <main className="min-h-screen bg-black flex items-center justify-center px-4 py-8">
