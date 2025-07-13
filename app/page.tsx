@@ -1,6 +1,11 @@
-"use client"; 
+"use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
+import { RadioBody } from "@/components/RadioBody";
+import { CRDisplay } from "@/components/CRDisplay";
+import { StatusPanel } from "@/components/StatusPanel";
+import { FrequencyDial } from "@/components/FrequencyDial";
+import { ActionButton } from "@/components/ActionButton";
 
 export default function HomePage() {
   const [callsign, setCallsign] = useState("");
@@ -15,7 +20,7 @@ export default function HomePage() {
   const dialRef = useRef<HTMLDivElement>(null);
 
   const minFreq = 88.0;
-  const maxFreq = 108.0;
+  const maxFreq = 208.0;
   const freqRange = maxFreq - minFreq; 
   const segmentWidth = 15; 
   const totalDialWidth = freqRange * 10 * segmentWidth;
@@ -179,88 +184,25 @@ export default function HomePage() {
         setRadioOn(false);
       }
     }
-  }, [radioOn, typeOut]);
+  }, [radioOn, typeOut, callsign]);
 
-  return (
+return (
     <main className="min-h-screen bg-black flex items-center justify-center px-4 py-8">
-      <div className="radio-body px-8 py-10 w-[350px] h-[780px] flex flex-col items-center relative">
-        <div className="antenna mx-auto -mt-8 mb-4"></div>
-
-        <div className="crt-display w-full h-[320px] flex flex-col justify-between py-4 px-3 mb-8 text-lime-400 font-['Press_Start_2P'] text-[13px] leading-relaxed"> 
-          <div className="typing-text whitespace-pre-wrap">{statusMessage}</div>
-
-          {radioOn && (
-            <>
-              <div className="flex w-full mb-4">
-                <div className="waveform-container">
-                  {waveformHeights.map((height, i) => (
-                    <div key={i} className="waveform-bar" style={{ height: `${height}%` }} />
-                  ))}
-                </div>
-              </div>
-              <div className="text-xl text-center mb-6">
-                INCOMING TRANSMISSION
-              </div>
-            </>
-          )}
-        </div>
-
-        <div className="status-panel w-full mb-8 py-4 px-4 flex flex-col items-center justify-center">
-          <div className="flex items-center justify-center mb-2">
-            <div className={`status-led ${radioOn ? "bg-green-500 glow-led" : "bg-red-500"}`}></div>
-            <span className="text-white text-base font-['Press_Start_2P'] ml-3">
-              STATUS: {radioOn ? "ON" : "OFF"}
-            </span>
-          </div>
-
-          <div className="frequency-display mt-4 text-lg">
-            {currentFrequency.toFixed(1)} MHz
-          </div>
-        </div>
-        <div
-          className="frequency-dial-container"
-          onWheel={handleDialWheel}
-          onMouseDown={handleDialStart}
-          onTouchStart={handleDialStart}
-        >
-          <div
-            ref={dialRef}
-            className="rolling-dial-surface"
-            style={{
-              width: `${totalDialWidth}px`,
-              transform: `translateX(${dialTranslateX}px)`,
-            }}
-          >
-            {Array.from({ length: (maxFreq - minFreq) * 10 + 1 }).map((_, i) => {
-              const freq = parseFloat((minFreq + i * 0.1).toFixed(1));
-              const isMajorMark = freq % 1 === 0;
-              const isMinorMark = freq % 0.5 === 0 && !isMajorMark;
-
-              return (
-                <div key={i} className="dial-segment">
-                  {isMajorMark && <span className="dial-major-label">{freq.toFixed(0)}</span>}
-                  {isMinorMark && <div className="dial-minor-tick"></div>}
-                  {!isMajorMark && !isMinorMark && <div className="dial-tick"></div>}
-                </div>
-              );
-            })}
-          </div>
-          <div className="dial-indicator-line"></div>
-        </div>
-
-        <button
-          className="action-button font-['Press_Start_2P'] mt-6"
-          onClick={handleConnectDisconnect}
-        >
-          {radioOn ? "DISCONNECT" : "CONNECT"}
-        </button>
-
-        <div className="flex justify-between w-full mt-auto px-2 text-[#606060] text-[10px] font-['Press_Start_2P']">
-          <div>PWR</div>
-          <div>MODE</div>
-          <div>BAT</div>
-        </div>
-      </div>
+      <RadioBody>
+        <CRDisplay message={statusMessage} radioOn={radioOn} waveformHeights={waveformHeights} />
+        <StatusPanel radioOn={radioOn} currentFrequency={currentFrequency} />
+        <FrequencyDial
+          totalDialWidth={totalDialWidth}
+          dialTranslateX={dialTranslateX}
+          handleDialWheel={handleDialWheel}
+          handleDialStart={handleDialStart}
+          dialRef={dialRef}
+          minFreq={minFreq}
+          maxFreq={maxFreq}
+          segmentWidth={segmentWidth}
+        />
+        <ActionButton onClick={handleConnectDisconnect} radioOn={radioOn} />
+      </RadioBody>
     </main>
   );
 }
