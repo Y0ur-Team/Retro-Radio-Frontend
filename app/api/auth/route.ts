@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 
 export async function POST() {
-  const RETRO_BACKEND = process.env.RETRO_BACKEND + "/auth/";
+  const RETRO_RADIO_BACKEND = process.env.RETRO_RADIO_BACKEND + "/auth/";
 
   try {
     const cookieStore = cookies();
@@ -12,7 +12,7 @@ export async function POST() {
       headers["RETRO-TOKEN"] = existingSession;
     }
 
-    const response = await fetch(RETRO_BACKEND, {
+    const response = await fetch(RETRO_RADIO_BACKEND, {
       method: "POST",
       headers,
     });
@@ -43,6 +43,7 @@ export async function POST() {
       });
     }
   } catch (err) {
+    console.log(err)
     return new Response(JSON.stringify({ error: "Auth failed" }), {
       status: 500,
     });

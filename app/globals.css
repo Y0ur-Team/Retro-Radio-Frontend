@@ -1,4 +1,5 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import 'tailwindcss';
 
 :root {
   --background: #ffffff;
@@ -8,8 +9,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-Press-start2P: 'Press Start 2P', sans-serif;
+  --font-body: 'Figtree', sans-serif;
+  --font-display: 'Bricolage Grotesque', sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -19,8 +21,314 @@
   }
 }
 
+@layer utilities {
+  .radio-body {
+    background-color: #3b3d3d;
+    border: 4px solid #1f2020;
+    border-radius: 6px;
+    box-shadow:
+      inset 0 0 0 2px #5f6060,
+      6px 6px 0 #101010,
+      12px 12px 0 #050505;
+    font-family: 'Press_Start_2P';
+    -webkit-font-smoothing: none;
+    text-rendering: optimizeSpeed;
+    box-sizing: border-box;
+    width: 350px;
+    height: 780px;
+    padding-top: 50px;
+    padding-bottom: 30px;
+  }
+
+  .antenna {
+    width: 24px;
+    height: 70px;
+    background-color: #222;
+    border: 2px solid #000;
+    box-shadow: inset 1px 1px 0 #444, inset -1px -1px 0 #111;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+  }
+
+  .crt-display {
+    background-color: #0d120d;
+    border-radius: 4px;
+    box-shadow:
+      inset 0 0 1px #0f0,
+      0 0 10px rgba(0, 255, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+    border: 3px solid #282828;
+    box-sizing: border-box;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    height: 320px;
+    margin-bottom: 24px;
+    color: #D4E157; 
+    font-size: 13px;
+    line-height: relaxed; 
+  }
+
+  .crt-display::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0, 255, 0, 0.04),
+      rgba(0, 255, 0, 0.04) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .crt-display::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -100%;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent, rgba(0, 255, 0, 0.04), transparent);
+    animation: scanline 7s infinite;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  @keyframes scanline {
+    0% { top: -100%; }
+    10% { top: 100%; }
+    100% { top: 100%; }
+  }
+
+  .glow-dot {
+    box-shadow: 0 0 5px 2px rgba(255, 0, 0, 0.6);
+  }
+
+  .waveform-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 100%;
+    height: 100px; 
+    background-color: #1a1f1a;
+    padding: 4px 2px;
+
+    margin-top: 8px;
+  }
+
+  .waveform-bar {
+    width: 2px; 
+    background-color: #0f0;
+    border: 1px solid #0a0;
+    margin: 0 1px;
+    box-shadow: 0 0 2px rgba(0, 255, 0, 0.5);
+    transition: height 0.1s ease-out;
+  }
+
+  .pixel-icon {
+    width: 28px;
+    height: 28px;
+    border: 2px solid #0f0;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 1px 1px 0 #0a0;
+  }
+
+  .skull-icon {
+    background-color: transparent;
+    box-shadow:
+      0 0 0 1px #0f0,
+      inset 4px 4px 0 0 #0f0,
+      inset -4px 4px 0 0 #0f0,
+      inset 0px 10px 0 0 #0f0,
+      inset 8px 12px 0 0 #0f0,
+      inset -8px 12px 0 0 #0f0;
+  }
+
+  .speaker-icon {
+    background-color: #1a1f1a;
+    border: 2px solid #0f0;
+    box-shadow:
+      inset 0 4px 0 0 #0f0,
+      inset 0 10px 0 0 #0f0,
+      inset 0 16px 0 0 #0f0;
+  }
+
+  .status-panel {
+    background-color: #2e3030;
+    border: 3px solid #1a1a1a;
+    border-radius: 4px;
+    box-shadow:
+      inset 2px 2px 0 #4c4e4e,
+      inset -2px -2px 0 #1c1e1e,
+      4px 4px 0 #080808;
+    padding: 16px 20px;
+  }
+
+  .status-led {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1px solid #000;
+    box-shadow: 0 0 4px rgba(0,0,0,0.5);
+    transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  }
+
+  .status-led.glow-led {
+    box-shadow: 0 0 8px 3px rgba(0, 255, 0, 0.7);
+  }
+
+  .frequency-display {
+    color: #0f0;
+    font-size: 20px;
+    font-weight: bold;
+    text-shadow: 0 0 5px #0f0, 0 0 10px rgba(0, 255, 0, 0.5);
+    background-color: #0d120d;
+    padding: 8px 12px;
+    border: 2px solid #282828;
+    border-radius: 2px;
+    margin-top: 12px;
+    box-shadow: inset 1px 1px 0 #0a0, inset -1px -1px 0 #050505;
+  }
+
+  .frequency-dial-container {
+    position: relative;
+    width: 240px;
+    height: 40px;
+    background-color: #1a1a1a;
+    border: 3px solid #000;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow:
+      inset 2px 2px 0 #2a2a2a,
+      inset -2px -2px 0 #0a0a0a,
+      4px 4px 0 #050505;
+    margin-bottom: 24px;
+    cursor: grab;
+  }
+
+  .frequency-dial-container:active {
+    cursor: grabbing;
+  }
+
+  .rolling-dial-surface {
+    position: absolute;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    background-color: #333;
+    transition: transform 0.05s linear;
+    user-select: none;
+    white-space: nowrap;
+  }
+
+  .dial-segment {
+    flex-shrink: 0;
+    width: 15px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    position: relative;
+  }
+
+  .dial-tick {
+    width: 2px;
+    height: 6px;
+    background-color: #777;
+    margin-bottom: 2px;
+  }
+
+  .dial-minor-tick {
+    width: 3px;
+    height: 10px;
+    background-color: #aaa;
+    margin-bottom: 2px;
+  }
+
+  .dial-major-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #0f0;
+    font-size: 14px;
+    min-width: 30px;
+    text-align: center;
+    text-shadow: 0 0 5px #0f0, 0 0 10px rgba(0, 255, 0, 0.5);
+    background-color: #0d120d;
+    padding: 0 4px;
+    border-radius: 2px;
+    line-height: 1;
+  }
+
+  .dial-indicator-line {
+    position: absolute;
+    height: 100%;
+    width: 2px;
+    background-color: #f00;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    box-shadow: 0 0 5px 1px rgba(255, 0, 0, 0.7);
+  }
+
+  .action-button {
+    background-color: #505555;
+    color: #fff;
+    padding: 16px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    border: 3px solid #303535;
+    box-shadow:
+      inset 4px 4px 0 #707575,
+      inset -4px -4px 0 #303535,
+      6px 6px 0 #101010;
+    cursor: pointer;
+    transition: transform 0.05s ease-out, box-shadow 0.05s ease-out;
+    border-radius: 4px;
+    width: 80%;
+    margin-bottom: 24px;
+  }
+
+  .action-button:active {
+    background-color: #404545;
+    box-shadow:
+      inset 6px 6px 0 #303535,
+      inset -2px -2px 0 #707575,
+      0 0 0 #101010;
+    transform: translate(6px, 6px);
+  }
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+  .action-button:active {
+    background-color: #404545;
+    box-shadow:
+      inset 6px 6px 0 #303535,
+      inset -2px -2px 0 #707575,
+      0 0 0 #101010;
+    transform: translate(6px, 6px);
+  }
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
 }
